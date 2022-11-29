@@ -1,0 +1,3 @@
+import pyglet
+
+print("a")
