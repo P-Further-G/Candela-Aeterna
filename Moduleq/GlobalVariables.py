@@ -4,12 +4,12 @@ CamPoz = [0,0,0];
 CamRot = [0,0,0];
 Width = 1280;
 Height = 620;
-Aspect = Width/float(Height);
-Title = "Equilibrium";
+Title = "Candela Aeterna";
 Fov = 60;
-Fps = 120.0;
-Level = 0;
-Start = False;
+Fps = 120;
+ProjectionType = True
+z_Near = 0.1
+z_Far = 60.0
 
 class WindowOptions:
     SampleBuffer = 1;
