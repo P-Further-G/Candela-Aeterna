@@ -12,6 +12,8 @@ class Shaderq:
         vert_Shader = Shader(vert_source, 'vertex')
         frag_Shader = Shader(frag_source, 'fragment')
         self.program = ShaderProgram(vert_Shader, frag_Shader)
+        self.pm = pm
+        self.mwm = mwm
         self.program['projection'] = pm
         self.program['modelview'] = mwm
         self.program.attributes.update()

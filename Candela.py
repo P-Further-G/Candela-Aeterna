@@ -7,7 +7,7 @@ from Moduleq.VertexArrayIndexBuffer import Obje
 
 config  = Config(sample_buffers = 1,
                  samples        = 4, 
-                 depth_size     = 24, 
+                 depth_size     = 16, 
                  double_buffer  = True)
 
 win = pyglet.window.Window(Width, Height, Title,
@@ -27,14 +27,14 @@ win.push_handlers(keys)
 glClearColor(0.1,0.1,0.1,1.0)
 
 poz =  [
--1,-1,-10,
--1, 1,-10,
- 1,-1,-10,
- 1, 1,-10,
--1,-1, -5,
--1, 1, -5,
- 1,-1, -5,
- 1, 1, -5 
+-1,-1,-1,
+-1, 1,-1,
+ 1,-1,-1,
+ 1, 1,-1,
+-1,-1, 1,
+-1, 1, 1,
+ 1,-1, 1,
+ 1, 1, 1 
 ]
 
 ind = [
@@ -82,10 +82,11 @@ normals = [
 cube = Obje(poz,ind,tex,normals)
 
 project = pyglet.math.Mat4.perspective_projection(Width/float(Height),z_near=z_Near, z_far=z_Far)
+rotation = pyglet.math.Mat4([0.9998,0,0.0174,0,0,1,0,0,-0.0174,0,0.9998,0,0,0,0,1])
 mwm = pyglet.math.Mat4([ 1.0, 0.0, 0.0, 0.0,
                         0.0, 1.0, 0.0, 0.0,
                         0.0, 0.0, 1.0, 0.0,
-                        0.0, 0.0, 0.0, 1.0])
+                        0.0, -2.0, -10.0, 1.0])
 
 shaderp = Shaderq('Shaders/VertexShader.shader','Shaders/FragmentShader.shader',project,mwm)
 
@@ -96,11 +97,16 @@ shaderp = Shaderq('Shaders/VertexShader.shader','Shaders/FragmentShader.shader',
 def on_resize(width, height):
 
     global Height, Width
-
+ 
     Width = width
     Height = height
 
-    glViewport(0, 0, *win.get_framebuffer_size())
+    glViewport(0,0, *win.get_framebuffer_size())
+
+    shaderp.pm = pyglet.math.Mat4.perspective_projection(width/float(height),z_near=z_Near, z_far=z_Far)
+    shaderp.program['projection'] = shaderp.pm
+
+    win.projection = pyglet.math.Mat4.orthogonal_projection(0,width,0,height, -255,255)
 
     return pyglet.event.EVENT_HANDLED 
 
@@ -116,6 +122,8 @@ def on_draw():
                                                                                     texcoord=('f',(tex)))
     vlist.draw(GL_TRIANGLES)
 
+    shaderp.mwm = rotation @ shaderp.mwm 
+    shaderp.program['modelview'] = shaderp.mwm
     
 
 
