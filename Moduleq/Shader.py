@@ -1,18 +1,23 @@
-from pyglet.gl import *
-import ctypes
+from pyglet.graphics.shader import Shader, ShaderProgram
+from pyglet.math import Mat4
 
-class Shader:
-    '''OpenGL shader programı oluşturur.
-    '''
+class Shaderq:
 
-    #TODO: will have its own uniforms.
 
-    def __init__(self,vertexsourcepath,fragmentsourcepath):
+    def __init__(self,vertexsourcepath,fragmentsourcepath,pm,mwm):
 
-        '''__init__() komutu.
-Vertex Shader ve Fragment Shader yolu alır.
-        '''
+        vert_source=open(vertexsourcepath,"r").read()
+        frag_source=open(fragmentsourcepath,"r").read()
 
+        vert_Shader = Shader(vert_source, 'vertex')
+        frag_Shader = Shader(frag_source, 'fragment')
+        self.program = ShaderProgram(vert_Shader, frag_Shader)
+        self.program['projection'] = pm
+        self.program['modelview'] = mwm
+        self.program.attributes.update()
+
+
+        """
         vertexsource = bytes(open(vertexsourcepath,"r").read(),'utf-8')
         fragmentsource = bytes(open(fragmentsourcepath,"r").read(),'utf-8')
 
@@ -36,34 +41,14 @@ Vertex Shader ve Fragment Shader yolu alır.
         glLinkProgram(self.shader)
 
         glDeleteShader(vertex_shader)
-        glDeleteShader(fragment_shader)
+        glDeleteShader(fragment_shader) 
+        """
 
-        del vertexsource
-        del fragmentsource
-        del vertex_buff
-        del c_vertex
-        del fragment_buff
-        del c_fragment
+        del vert_source
+        del frag_source
 
+        #del vertex_buff
+        #del c_vertex
+        #del fragment_buff
+        #del c_fragment
 
-    def use(self,pm,mvm):
-        '''Shaderı bağlar.'''
-
-        glUseProgram(self.shader)
-        pm.Send()
-        mvm.Send()
-
-    def getlocation(self,uniform):
-        '''Shader'dan bir uniformun konumunu verir.'''
-        converted = uniform.encode('utf-8')
-        return glGetUniformLocation(self.shader, ctypes.c_char_p(converted))
-
-    def close(self):
-        '''Shaderı kapatır. (0. Shadera bağlar)'''
-
-        glUseProgram(0)
-
-    def kill(self):
-
-        glDeleteProgram(self.shader)
-       
