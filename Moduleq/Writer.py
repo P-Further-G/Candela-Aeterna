@@ -15,7 +15,7 @@ class Text:
 
         self.t += dt
         leng = time/len(self.metin)
-        self.draw(win)
+        self.label.draw()
 
         if self.t//leng > len(self.metin):
             return

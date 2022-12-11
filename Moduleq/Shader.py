@@ -1,10 +1,11 @@
 from pyglet.graphics.shader import Shader, ShaderProgram
 from pyglet.math import Mat4
+from math import sin,cos,radians
 
 class Shaderq:
 
 
-    def __init__(self,vertexsourcepath,fragmentsourcepath,pm,mwm):
+    def __init__(self,vertexsourcepath,fragmentsourcepath):
 
         vert_source=open(vertexsourcepath,"r").read()
         frag_source=open(fragmentsourcepath,"r").read()
@@ -12,45 +13,42 @@ class Shaderq:
         vert_Shader = Shader(vert_source, 'vertex')
         frag_Shader = Shader(frag_source, 'fragment')
         self.program = ShaderProgram(vert_Shader, frag_Shader)
-        self.pm = pm
-        self.mwm = mwm
-        self.program['projection'] = pm
-        self.program['modelview'] = mwm
-        self.program.attributes.update()
 
+        self.projection= Mat4.perspective_projection(1280/float(620),z_near=0.1, z_far=255,fov=60.0)
+        self.modelview = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -15.0, 1.0])
+        self.program['projection'] = self.projection
+        self.program['modelview'] = self.modelview
 
-        """
-        vertexsource = bytes(open(vertexsourcepath,"r").read(),'utf-8')
-        fragmentsource = bytes(open(fragmentsourcepath,"r").read(),'utf-8')
-
-
-        vertex_buff= ctypes.create_string_buffer(vertexsource)
-        c_vertex= ctypes.cast(ctypes.pointer(ctypes.pointer(vertex_buff)), ctypes.POINTER(ctypes.POINTER(GLchar)))
-        vertex_shader= glCreateShader(GL_VERTEX_SHADER)
-        glShaderSource(vertex_shader, 1, c_vertex, None)
-        glCompileShader(vertex_shader)
-
-
-        fragment_buff= ctypes.create_string_buffer(fragmentsource)
-        c_fragment= ctypes.cast(ctypes.pointer(ctypes.pointer(fragment_buff)), ctypes.POINTER(ctypes.POINTER(GLchar)))
-        fragment_shader= glCreateShader(GL_FRAGMENT_SHADER)
-        glShaderSource(fragment_shader, 1, c_fragment, None)
-        glCompileShader(fragment_shader)
-
-        self.shader= glCreateProgram()
-        glAttachShader(self.shader, vertex_shader)
-        glAttachShader(self.shader, fragment_shader)
-        glLinkProgram(self.shader)
-
-        glDeleteShader(vertex_shader)
-        glDeleteShader(fragment_shader) 
-        """
+        self.rotx = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
+        self.roty = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
+        self.pos_x = 0.0
+        self.pos_y = 0.0
+        self.pos_z = -15.0
+        self.angle_x = 0
+        self.angle_y = 0
+        self.is_on = True
 
         del vert_source
         del frag_source
 
-        #del vertex_buff
-        #del c_vertex
-        #del fragment_buff
-        #del c_fragment
+    def rotate(self,dx,dy):
 
+        if -1 <= self.angle_x + dx <= 1: self.angle_x += dx
+        self.angle_y += dy
+
+        self.rotx= Mat4([1,0,0,0,0,cos(self.angle_x),-sin(self.angle_x),0,0,sin(self.angle_x),cos(self.angle_x),0,0,0,0,1])
+
+        self.roty= Mat4([cos(self.angle_y),0,sin(self.angle_y),0,0,1,0,0,-sin(self.angle_y),0,cos(self.angle_y),0,0,0,0,1])
+
+        self.program['modelview'] =  self.roty @ self.rotx @ self.modelview 
+
+
+
+    def Transform(self, tx, ty, tz):
+
+        self.pos_x += tx
+        self.pos_y += ty
+        self.pos_z += tz
+
+        self.modelview = Mat4([ *self.modelview[0:12], self.pos_x, self.pos_y, self.pos_z, 1])
+        self.program['modelview'] = self.roty @ self.rotx @ self.modelview
