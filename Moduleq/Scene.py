@@ -1,13 +1,19 @@
+import pyglet
 from pyglet.gl import *
+
 
 class Scene:
     
     def __init__(self,shader):
 
-        self.scene = {}
+        self.scene_obj = {}
+        self.scene_sprites = {}
+        self.buttons = {}
         self.shaderprogram = shader.program
+        self.batch = pyglet.graphics.Batch()
+        self.visible = True
+        self.active = True
 
-        
         poz =  [
         -1,-1,-1,
         -1, 1,-1,
@@ -68,24 +74,58 @@ class Scene:
 
     def add_object(self,obj):
 
-        data = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3), GL_TRIANGLES, 
-                                                      obj['indices'], position=('f',(obj['positions'])),
+        self.scene_obj[obj['name']] = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3),GL_TRIANGLES, 
+                                                      obj['indices'],batch=self.batch, position=('f',(obj['positions'])),
                                                       normal=('f',(obj['normals'])),
                                                       texcoord=('f',(obj['texcoords'])))
 
-        self.scene[obj['name']] = data
+    def add_sprite(self,name,image,x1=0,y1=0,x2=1,y2=1,z=-1):
 
-    def render(self, *exclude):
+        self.scene_sprites[name] = {'sprite_data':pyglet.sprite.Sprite(img=image, x=x1, y=y1, z=z, batch = self.batch),
+                                    'width':image.width,
+                                    'height':image.height,
+                                    'pos_x1':x1,
+                                    'pos_x2':x2-x1,
+                                    'pos_y1':y1,
+                                    'pos_y2':y2-y1}
 
-        for name,obj in self.scene.items():
+    def add_button(self,name,x1,y1,x2,y2,todo):
 
-            if not name in exclude:
+        self.buttons[name] = {'pos_x1':x1,
+                              'pos_x2':x2,
+                              'pos_y1':y1,
+                              'pos_y2':y2,
+                              'func':todo}
 
-                obj.draw(GL_TRIANGLES)
+
+    def scale_acc_to_window(self,width,height):
+
+        for sprite in self.scene_sprites.values():
+            sprite['sprite_data'].x = width*sprite['pos_x1']
+            sprite['sprite_data'].y = height*sprite['pos_y1']
+            sprite['sprite_data'].scale_x = width/sprite['width']*sprite['pos_x2']
+            sprite['sprite_data'].scale_y = height/sprite['height']*sprite['pos_y2']
+
+
+    def click_event(self,win,x,y):
+
+        for button in self.buttons.values():
+
+            if self.active and button['pos_x1']*win.width <= x <= button['pos_x2']*win.width and button['pos_y1']*win.height <= y <= button['pos_y2']*win.height:
+
+                button['func']()
+
+
+    def delete_obj(self,name):
+
+        self.scene_obj[name].delete()
+
+    def render(self):
+
+        if self.visible: self.batch.draw()
 
 
     @staticmethod
     def getobj(name:str, poz:list, ind:list, normals:list, texcoord:list):
 
-        dic = {'name':name, 'positions':poz, 'indices':ind, 'normals':normals, 'texcoords':texcoord}
-        return dic
+        return {'name':name, 'positions':poz, 'indices':ind, 'normals':normals, 'texcoords':texcoord}

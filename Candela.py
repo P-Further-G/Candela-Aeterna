@@ -1,3 +1,4 @@
+import pyglet
 from pyglet.gl import *
 from Moduleq.Writer import Text
 from Moduleq.Shader import Shaderq
@@ -22,7 +23,9 @@ fps_display = pyglet.window.FPSDisplay(window=win)
 
 glEnable(GL_DEPTH_TEST)
 glEnable(GL_CULL_FACE)
-
+glEnable(GL_BLEND)
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+glDepthFunc(GL_LEQUAL)
 
 win.set_minimum_size(500,300)
 win.push_handlers(keys)
@@ -31,6 +34,22 @@ glClearColor(0.1,0.1,0.1,1.0)
 
 ShaderProgram = Shaderq('Shaders/VertexShader.shader','Shaders/FragmentShader.shader')
 Sahne = Scene(ShaderProgram)
+Sahne.visible = False
+
+Sahne2 = Scene(ShaderProgram)
+Sahne2.delete_obj('def')
+
+
+menu = pyglet.image.load('resources/menü.png')
+Sahne2.add_sprite('menü',menu,x1=0.3,y1=0.3,x2=0.5,y2=0.5)
+
+def helo():
+    Sahne.visible = True
+    Sahne2.active = False
+    Sahne2.visible = False
+
+Sahne2.add_button('ney',0.3,0.3,0.5,0.5,helo)
+
 
 
 
@@ -42,10 +61,19 @@ def on_resize(width, height):
     ShaderProgram.projection = pyglet.math.Mat4.perspective_projection(width/float(height),z_near=0.1, z_far=255,fov=60.0)
     ShaderProgram.program['projection'] = ShaderProgram.projection
 
-    win.projection = pyglet.math.Mat4.orthogonal_projection(0,width,0,height, -255,255)
+    win.projection = pyglet.math.Mat4.orthogonal_projection(0,width,0,height, -1,1)
+
+    Sahne2.scale_acc_to_window(width,height)
 
     return pyglet.event.EVENT_HANDLED 
 
+
+
+
+@win.event
+def on_mouse_press(x, y, button, modifiers):
+
+    Sahne2.click_event(win,x,y)
 
 
 
@@ -73,7 +101,7 @@ def on_draw():
     ShaderProgram.program.use()
     
     Sahne.render()
-
+    Sahne2.render()
     
     fps_display.draw()
 
