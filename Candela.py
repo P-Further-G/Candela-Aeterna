@@ -40,15 +40,21 @@ Sahne2 = Scene(ShaderProgram)
 Sahne2.delete_obj('def')
 
 
-menu = pyglet.image.load('resources/menü.png')
-Sahne2.add_sprite('menü',menu,x1=0.3,y1=0.3,x2=0.5,y2=0.5)
+foto = pyglet.image.load('resources/menü.png')
 
-def helo():
-    Sahne.visible = True
-    Sahne2.active = False
-    Sahne2.visible = False
 
-Sahne2.add_button('ney',0.3,0.3,0.5,0.5,helo)
+Sahne2.add_sprite('1',foto,0.0, 0.0, 0.4, 0.6)
+
+
+def huh():
+
+    Sahne.flip_visiblity()
+    Sahne2.flip_visiblity()
+    print("aa")
+
+
+Sahne2.add_button('ney1',0.0, 0.0, 0.4, 0.6, huh)
+
 
 
 

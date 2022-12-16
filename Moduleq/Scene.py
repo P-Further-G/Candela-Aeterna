@@ -79,7 +79,7 @@ class Scene:
                                                       normal=('f',(obj['normals'])),
                                                       texcoord=('f',(obj['texcoords'])))
 
-    def add_sprite(self,name,image,x1=0,y1=0,x2=1,y2=1,z=-1):
+    def add_sprite(self,name:str,image, x1:float, y1:float, x2:float, y2:float, z=-1.0):
 
         self.scene_sprites[name] = {'sprite_data':pyglet.sprite.Sprite(img=image, x=x1, y=y1, z=z, batch = self.batch),
                                     'width':image.width,
@@ -89,7 +89,7 @@ class Scene:
                                     'pos_y1':y1,
                                     'pos_y2':y2-y1}
 
-    def add_button(self,name,x1,y1,x2,y2,todo):
+    def add_button(self,name,x1:float,y1:float,x2:float,y2:float,todo):
 
         self.buttons[name] = {'pos_x1':x1,
                               'pos_x2':x2,
@@ -115,6 +115,9 @@ class Scene:
 
                 button['func']()
 
+    def flip_visiblity(self):
+
+        self.visible = not self.visible
 
     def delete_obj(self,name):
 
