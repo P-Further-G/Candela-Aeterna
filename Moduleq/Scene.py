@@ -11,8 +11,8 @@ class Scene:
         self.buttons = {}
         self.shaderprogram = shader.program
         self.batch = pyglet.graphics.Batch()
-        self.visible = True
-        self.active = True
+        self.visible = False
+        self.active = False
 
         poz =  [
         -1,-1,-1,
