@@ -38,7 +38,7 @@ class Camera:
 
 
 
-        self.is_on = True
+        self.is_on = False
 
         del vert_source
         del frag_source

@@ -16,12 +16,28 @@ class Level():
 
         self.menu = Scene(self.Camera)
         self.menu.delete_obj('def')
-        self.menu.add_button('tuttifurti',0.47,0.47,0.53,0.53,self._openlvl1)
         self.menu.active = True
         self.menu.visible = True
-        self.menu.add_sprite('ehe',foto,0.47,0.47,0.53,0.53)
+        self.menu.add_button('tuttifurti',0.22,0.42,0.37,0.57,self._openlvl1)
+        self.menu.add_sprite('ehe',foto,0.22,0.42,0.37,0.57)
+        self.menu.add_button('tuttifurti2',0.62,0.42,0.77,0.57,self._openlvl2)
+        self.menu.add_sprite('ehhe',foto,0.62,0.42,0.77,0.57)
+
 
         self.kup1 = Scene(self.Camera)
+        self.kup1.add_object(self.kup1.getobj('ehe',[2,1,5,
+                                                     0,5,0,
+                                                     4,-2,-3],[0,1,2],[1,1,1,
+                                                                       1,1,0,
+                                                                       0,1,0],[0,0,
+                                                                               1,1,
+                                                                               0,1]))
+        self.kup1.add_sprite('huh',foto,0.06,0.8,0.2,0.96)
+        self.kup1.add_button('huuh',0.06,0.8,0.2,0.96,self._returntomenu)
+
+        self.kup2 = Scene(self.Camera)
+        self.kup2.add_sprite('huh',foto,0.06,0.8,0.2,0.96)
+        self.kup2.add_button('huuh',0.06,0.8,0.2,0.96,self._returntomenu2)
 
     #=============================================================>
 
@@ -34,10 +50,14 @@ class Level():
     def scale(self,width,height):
 
         self.menu.scale_acc_to_window(width,height)
+        self.kup1.scale_acc_to_window(width,height)
+        self.kup2.scale_acc_to_window(width,height)
 
     def on_click(self,x,y):
 
          self.menu.click_event(self.window,x,y)
+         self.kup1.click_event(self.window,x,y)
+         self.kup2.click_event(self.window,x,y)
 
     def on_scroll(self,scroll_y):
 
@@ -71,6 +91,11 @@ class Level():
             self.Camera.program.use()
             self.kup1.render()
 
+        if self.CURRENT_LEVEL == 2:
+
+            self.Camera.program.use()
+            self.kup2.render()
+
 
     def _openlvl1(self):
 
@@ -79,7 +104,33 @@ class Level():
         self.menu.active = False
         self.kup1.active = True
         self.kup1.visible = True
+        self.Camera.is_on = True
 
+    def _openlvl2(self):
 
+        self.CURRENT_LEVEL = 2
+        self.menu.visible = False
+        self.menu.active = False
+        self.kup2.active = True
+        self.kup2.visible = True
+        self.Camera.is_on = True
+
+    def _returntomenu(self):
+
+        self.CURRENT_LEVEL = 0
+        self.menu.visible = True
+        self.menu.active = True
+        self.kup1.active = False
+        self.kup1.visible = False
+        self.Camera.is_on = False
+
+    def _returntomenu2(self):
+
+        self.CURRENT_LEVEL = 0
+        self.menu.visible = True
+        self.menu.active = True
+        self.kup2.active = False
+        self.kup2.visible = False
+        self.Camera.is_on = False
 
     
