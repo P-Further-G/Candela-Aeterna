@@ -6,6 +6,7 @@ from Moduleq.Scene import Scene
 from LevelEditor import Level
 
 
+
 config  = Config(sample_buffers = 1,
                  samples        = 4, 
                  depth_size     = 16, 
@@ -27,6 +28,7 @@ glEnable(GL_DEPTH_TEST)
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glDepthFunc(GL_LEQUAL)
+glEnable(GL_TEXTURE_2D)
 
 win.set_minimum_size(500,300)
 win.push_handlers(keys)
@@ -80,7 +82,7 @@ def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
 def on_draw():
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    
+
     engine.show()
     
     fps_display.draw()

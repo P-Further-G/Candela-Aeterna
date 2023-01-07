@@ -1,9 +1,11 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Models",
     "\\Moduleq",
-    "\\resources"
+    "\\resources",
+    "\\Shaders"
   ],
-  "SelectedNode": "\\Moduleq\\Writer.py",
+  "SelectedNode": "\\Moduleq\\Texture.py",
   "PreviewInSolutionExplorer": false
 }

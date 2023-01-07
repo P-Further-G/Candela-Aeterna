@@ -1,6 +1,7 @@
 import pyglet
 from pyglet.gl import *
-
+from Moduleq.ObjLoader import ObjLoader
+from Moduleq.Texture import TextureGroup
 
 class Scene:
     
@@ -13,71 +14,27 @@ class Scene:
         self.batch = pyglet.graphics.Batch()
         self.visible = False
         self.active = False
-
-        poz =  [
-        -1,-1,-1,
-        -1, 1,-1,
-         1,-1,-1,
-         1, 1,-1,
-        -1,-1, 1,
-        -1, 1, 1,
-         1,-1, 1,
-         1, 1, 1 
-        ]
+        self.group = None
 
 
-        ind = [
-        0,1,2,
-        2,1,3,
+    def set_texture(self,path):
 
-        0,4,1,
-        4,5,1,
-
-        4,6,5,
-        5,6,7,
-
-        2,3,6,
-        6,3,7,
-
-        1,5,3,
-        5,7,3,
-
-        0,2,4,
-        4,2,6
-        ]
-
-        tex = [
-        0,0,
-        0,1,
-        1,0,
-        1,1,
-        0,0,
-        0,1,
-        1,0,
-        1,1
-        ]
-
-        normals = [
-        0,0,0,
-        0,0,0,
-        0,0,0,
-        0,0,0,
-        0,0,0,
-        0,0,0,
-        0,0,0,
-        0,0,0
-        ]
-
-        default_obj = self.getobj('def',poz,ind,normals,tex)
-        self.add_object(default_obj)
-
+        self.texture = pyglet.image.load(path).get_texture()
+        self.group = TextureGroup(self.texture,self.shaderprogram)
 
     def add_object(self,obj):
 
         self.scene_obj[obj['name']] = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3),GL_TRIANGLES, 
-                                                      obj['indices'],batch=self.batch, position=('f',(obj['positions'])),
+                                                      obj['indices'],batch=self.batch,group=self.group, position=('f',(obj['positions'])),
                                                       normal=('f',(obj['normals'])),
                                                       texcoord=('f',(obj['texcoords'])))
+
+    def add_obj_file(self,name,path):
+
+        vertices, indices, normals, texture = ObjLoader(path)
+        obj = self.getobj(name, vertices, indices, normals, texture)
+        self.add_object(obj)
+
 
     def add_sprite(self,name:str,image, x1:float, y1:float, x2:float, y2:float, z=-1.0):
 

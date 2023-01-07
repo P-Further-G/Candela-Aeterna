@@ -1,6 +1,7 @@
 import pyglet
 from Moduleq.Scene import Scene
 from Moduleq.Camera import Camera
+from Moduleq.Texture import TextureGroup
 
 foto = pyglet.image.load('resources/menü.png')
 
@@ -15,7 +16,6 @@ class Level():
     #=============================================================>
 
         self.menu = Scene(self.Camera)
-        self.menu.delete_obj('def')
         self.menu.active = True
         self.menu.visible = True
         self.menu.add_button('tuttifurti',0.22,0.42,0.37,0.57,self._openlvl1)
@@ -23,8 +23,8 @@ class Level():
         self.menu.add_button('tuttifurti2',0.62,0.42,0.77,0.57,self._openlvl2)
         self.menu.add_sprite('ehhe',foto,0.62,0.42,0.77,0.57)
 
-
         self.kup1 = Scene(self.Camera)
+        self.kup1.set_texture("resources/Kup.png")
         self.kup1.add_object(self.kup1.getobj('ehe',[2,1,5,
                                                      0,5,0,
                                                      4,-2,-3],[0,1,2],[1,1,1,
@@ -36,8 +36,10 @@ class Level():
         self.kup1.add_button('huuh',0.06,0.8,0.2,0.96,self._returntomenu)
 
         self.kup2 = Scene(self.Camera)
+        self.kup2.set_texture("resources/Kup.png")
         self.kup2.add_sprite('huh',foto,0.06,0.8,0.2,0.96)
         self.kup2.add_button('huuh',0.06,0.8,0.2,0.96,self._returntomenu2)
+        self.kup2.add_obj_file("hey","Models/lab.obj")
 
     #=============================================================>
 
@@ -69,12 +71,12 @@ class Level():
     def on_drag(self,dx,dy):
 
         if self.Camera.is_on:
-            self.Camera.will_rotate_to(self.Camera.angle_x + dy/10, self.Camera.angle_y + -dx/10)
+            self.Camera.will_rotate_to(self.Camera.angle_x + dy/20, self.Camera.angle_y + -dx/20)
 
     def on_update(self,dt):
 
         self.Camera.Smooth_Translate(5*dt)
-        self.Camera.Smooth_Rotate(2*dt)
+        self.Camera.Smooth_Rotate(3*dt)
 
 
     #=============================================================>
@@ -83,17 +85,14 @@ class Level():
 
         if self.CURRENT_LEVEL == 0:
 
-            self.Camera.program.use()
             self.menu.render()
 
         if self.CURRENT_LEVEL == 1:
 
-            self.Camera.program.use()
             self.kup1.render()
 
         if self.CURRENT_LEVEL == 2:
 
-            self.Camera.program.use()
             self.kup2.render()
 
 
