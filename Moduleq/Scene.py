@@ -2,6 +2,7 @@ import pyglet
 from pyglet.gl import *
 from Moduleq.ObjLoader import ObjLoader
 from Moduleq.Texture import TextureGroup
+from Moduleq.Writer import Text
 
 class Scene:
     
@@ -10,6 +11,7 @@ class Scene:
         self.scene_obj = {}
         self.scene_sprites = {}
         self.buttons = {}
+        self.text_holder = {}
         self.shaderprogram = shader.program
         self.batch = pyglet.graphics.Batch()
         self.visible = False
@@ -35,8 +37,13 @@ class Scene:
         obj = self.getobj(name, vertices, indices, normals, texture)
         self.add_object(obj)
 
+    def add_obj_converted(self,name,path):
+        with open(path,"r") as file:
+            data = file.readlines()
+            obj = self.getobj(name, list(map(float,data[0].split(' '))), list(map(int,data[1].split(' '))), list(map(float,data[2].split(' '))), list(map(float,data[3].split(' '))))
+            self.add_object(obj)
 
-    def add_sprite(self,name:str,image, x1:float, y1:float, x2:float, y2:float, z=-1.0):
+    def add_sprite(self,name:str,image, x1:float, y1:float, x2:float, y2:float, z=1.0):
 
         self.scene_sprites[name] = {'sprite_data':pyglet.sprite.Sprite(img=image, x=x1, y=y1, z=z, batch = self.batch),
                                     'width':image.width,
@@ -54,6 +61,19 @@ class Scene:
                               'pos_y2':y2,
                               'func':todo}
 
+    def add_text(self,name,text,punto,x,y,color,width):
+
+        self.text_holder[name] = Text(text,punto,x,y,color,width,self.batch)
+
+    def timed_write_text(self,name,sec,dt):
+
+        self.text_holder[name].timed_draw(sec,dt)
+
+    def should_write(self, swrite=True):
+
+        for t in self.text_holder.values():
+
+            t.swrite = swrite
 
     def scale_acc_to_window(self,width,height):
 
@@ -82,7 +102,9 @@ class Scene:
 
     def render(self):
 
-        if self.visible: self.batch.draw()
+        if self.visible: 
+            
+            self.batch.draw()
 
 
     @staticmethod

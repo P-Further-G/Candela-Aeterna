@@ -4,38 +4,33 @@ font.add_file('resources/def_font.ttf')
 
 
 class Text:
-    def __init__(self,metin,punto,x,y,colorRGBA,width):
+    def __init__(self,metin,punto,x,y,colorRGBA,width,batch):
 
         self.t = 0
+        self.swrite = False
         self.metin = metin
-        self.label = text.Label(metin[0],font_name='UKIJ Ruqi', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
-                                color=colorRGBA, width=width, multiline=True)
+        self.label = text.Label(' ',font_name='UKIJ Ruqi', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
+                                color=colorRGBA,width=width, batch=batch, multiline=True)
 
-    def timed_draw(self,time,dt,win):
+    def timed_draw(self,time,dt):
 
-        self.t += dt
-        leng = time/len(self.metin)
-        self.label.draw()
+        if self.swrite:
 
-        if self.t//leng > len(self.metin):
-            return
+            self.t += dt
+            leng = time/len(self.metin)
 
-        self.label.text = self.metin[0:int(self.t//leng)]
+            if self.t//leng > len(self.metin):
+                return
 
-    def draw(self,window):
+            self.label.text = self.metin[0:int(self.t//leng)]
 
-        gl.glMatrixMode(gl.GL_MODELVIEW)
-        gl.glPushMatrix()
-        gl.glLoadIdentity()
+        else:
 
-        gl.glMatrixMode(gl.GL_PROJECTION)
-        gl.glPushMatrix()
-        gl.glLoadIdentity()
-        gl.glOrtho(0, window.width, 0, window.height, -1, 1)
+            self.t = 0
+            self.label.text = ' '
 
-        self.label.draw()
+    def draw(self):
 
-        gl.glPopMatrix()
+        if self.swrite:
 
-        gl.glMatrixMode(gl.GL_MODELVIEW)
-        gl.glPopMatrix()
+            self.label.text = self.metin

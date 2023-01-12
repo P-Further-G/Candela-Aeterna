@@ -1,4 +1,4 @@
-import sys 
+import time
 
 def ObjLoader(path):
 
@@ -122,13 +122,23 @@ def ObjLoader(path):
                     indices.append(sayac.index(data))
 
 
-    del vlist
-    del tlist
-    del nlist
-    del sayac
-    del isayac
-
     return vertices, indices, normals, texcoords
 
 
+path = str(input("Path =>"))
+name = str(input("What will be its name =>"))
 
+t1 = time.perf_counter()
+vertices, indices, normals, texcoords = ObjLoader(path)
+
+with open(f"Models_converted/{name}.txt".format(name = name),"w") as file:
+
+    file.write(' '.join(map(str,vertices))+"\n")
+    file.write(' '.join(map(str,indices))+"\n")
+    file.write(' '.join(map(str,normals))+"\n")
+    file.write(' '.join(map(str,texcoords))+"\n")
+    t2 = time.perf_counter()
+    t = t2-t1
+    print("Finished in "+str(t)+" seconds")
+
+x = input("press any key to close")

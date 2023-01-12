@@ -14,7 +14,7 @@ void main()
 {
     vec4 basecolor = texture(oTexture, TexCoord);
 
-    vec3 lightDir = normalize(vec3(0, 10, 0) - FragPos);
+    vec3 lightDir = normalize(vec3(0, 10, 10) - FragPos);
 
     vec4 diff = (dot(Normal, lightDir) + 1.0) * vec4(0.5, 0.5, 0.5, 1.0);
 

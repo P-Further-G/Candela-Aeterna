@@ -19,19 +19,19 @@ win = pyglet.window.Window(1280, 620, "Candela Aeterna",
                            config    = config)
 
 
-keys        = pyglet.window.key.KeyStateHandler()
 fps_display = pyglet.window.FPSDisplay(window=win)
 
 
-glEnable(GL_DEPTH_TEST)
-#glEnable(GL_CULL_FACE)
-glEnable(GL_BLEND)
+glEnable( GL_DEPTH_TEST )
+glEnable( GL_CULL_FACE  )
+glEnable(   GL_BLEND    )
+glEnable( GL_TEXTURE_2D )
+
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glDepthFunc(GL_LEQUAL)
-glEnable(GL_TEXTURE_2D)
 
 win.set_minimum_size(500,300)
-win.push_handlers(keys)
+
 glClearColor(0.1,0.1,0.1,1.0)
 
 engine = Level(win)
@@ -59,6 +59,7 @@ def on_resize(width, height):
 def on_mouse_press(x, y, button, modifiers):
 
     engine.on_click(x,y)
+
 
 
 
@@ -93,6 +94,7 @@ def on_draw():
 def update(dt):
 
     engine.on_update(dt)
+
 
 
 

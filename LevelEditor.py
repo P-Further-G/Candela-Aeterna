@@ -25,13 +25,7 @@ class Level():
 
         self.kup1 = Scene(self.Camera)
         self.kup1.set_texture("resources/Kup.png")
-        self.kup1.add_object(self.kup1.getobj('ehe',[2,1,5,
-                                                     0,5,0,
-                                                     4,-2,-3],[0,1,2],[1,1,1,
-                                                                       1,1,0,
-                                                                       0,1,0],[0,0,
-                                                                               1,1,
-                                                                               0,1]))
+        self.kup1.add_obj_converted("heyo","Models_converted/Lab.txt")
         self.kup1.add_sprite('huh',foto,0.06,0.8,0.2,0.96)
         self.kup1.add_button('huuh',0.06,0.8,0.2,0.96,self._returntomenu)
 
@@ -39,7 +33,8 @@ class Level():
         self.kup2.set_texture("resources/Kup.png")
         self.kup2.add_sprite('huh',foto,0.06,0.8,0.2,0.96)
         self.kup2.add_button('huuh',0.06,0.8,0.2,0.96,self._returntomenu2)
-        self.kup2.add_obj_file("hey","Models/lab.obj")
+        self.kup2.add_obj_converted("hey","Models_converted/Kure.txt")
+        self.kup2.add_text("ah","bababababa",36,500,500,(255,0,255,255),500)
 
     #=============================================================>
 
@@ -113,6 +108,8 @@ class Level():
         self.kup2.active = True
         self.kup2.visible = True
         self.Camera.is_on = True
+        self.kup2.should_write()
+        self.kup2.text_holder["ah"].draw()
 
     def _returntomenu(self):
 
