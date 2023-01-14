@@ -2,35 +2,37 @@ from pyglet import gl, text, font
 
 font.add_file('resources/def_font.ttf')
 
-
 class Text:
-    def __init__(self,metin,punto,x,y,colorRGBA,width,batch):
 
-        self.t = 0
-        self.swrite = False
-        self.metin = metin
-        self.label = text.Label(' ',font_name='UKIJ Ruqi', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
-                                color=colorRGBA,width=width, batch=batch, multiline=True)
+    def __init__(self,batch):
 
-    def timed_draw(self,time,dt):
+        self._batch = batch
+        self._Order = []
+        self._Queue = 0
+        self.add_text(0,' ',1,0,0,(0,0,0,0),1)
 
-        if self.swrite:
+    def next_text(self):
 
-            self.t += dt
-            leng = time/len(self.metin)
+        self._make_unvisible(self._Queue)
+        self._Queue += 1
+        self._make_visible(self._Queue)
 
-            if self.t//leng > len(self.metin):
-                return
+    def add_text(self,order,Text,punto,x,y,colorRGBA,width):
 
-            self.label.text = self.metin[0:int(self.t//leng)]
+        label = text.Label(' ',font_name='Comic Sans MS', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
+                                color=colorRGBA,width=width, batch=self._batch, multiline=True,)
 
-        else:
+        self._Order.insert(order,[label,Text])
 
-            self.t = 0
-            self.label.text = ' '
+    def _make_visible(self,line):
 
-    def draw(self):
+        try:
+            self._Order[line][0].text = self._Order[line][1]
+    
+        except IndexError:
 
-        if self.swrite:
+            self._Queue = 0
 
-            self.label.text = self.metin
+    def _make_unvisible(self,line):
+
+        self._Order[line][0].text = ' '

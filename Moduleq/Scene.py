@@ -11,12 +11,12 @@ class Scene:
         self.scene_obj = {}
         self.scene_sprites = {}
         self.buttons = {}
-        self.text_holder = {}
         self.shaderprogram = shader.program
         self.batch = pyglet.graphics.Batch()
         self.visible = False
         self.active = False
         self.group = None
+        self.Text = None
 
 
     def set_texture(self,path):
@@ -61,19 +61,10 @@ class Scene:
                               'pos_y2':y2,
                               'func':todo}
 
-    def add_text(self,name,text,punto,x,y,color,width):
+    def add_Text_class(self):
 
-        self.text_holder[name] = Text(text,punto,x,y,color,width,self.batch)
+        self.Text = Text(self.batch)
 
-    def timed_write_text(self,name,sec,dt):
-
-        self.text_holder[name].timed_draw(sec,dt)
-
-    def should_write(self, swrite=True):
-
-        for t in self.text_holder.values():
-
-            t.swrite = swrite
 
     def scale_acc_to_window(self,width,height):
 

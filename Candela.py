@@ -32,7 +32,7 @@ glDepthFunc(GL_LEQUAL)
 
 win.set_minimum_size(500,300)
 
-glClearColor(0.1,0.1,0.1,1.0)
+glClearColor(0.7,0.7,1.0,1.0)
 
 engine = Level(win)
 

@@ -60,7 +60,7 @@ class Camera:
 
         self.roty= Mat4([cos(self.angle_y),0,sin(self.angle_y),0,0,1,0,0,-sin(self.angle_y),0,cos(self.angle_y),0,0,0,0,1])
 
-        self.program['modelview'] =  self.roty @ self.rotx @ self.modelview 
+        self.program['modelview'] =  self.modelview @ self.rotx @ self.roty
 
 
     def Translate(self, tx, ty, tz):
