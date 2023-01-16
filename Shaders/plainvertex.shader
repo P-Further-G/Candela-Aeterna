@@ -4,22 +4,17 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texcoord;
 
 out vec2 TexCoord;
-out vec3 Normal;
-out vec3 FragPos;
-out vec2 poz;
 
 uniform mat4 projection;
 uniform mat4 modelview;
 
+float outlining = 0.5;
+
 void main()
 {
 
-    vec4 coord = projection * modelview * vec4(position, 1.0);
-
-    gl_Position = coord;
+    vec4 coord = projection * modelview * vec4(position + normal*outlining, 1.0);
+    gl_Position = coord.xyww;
     TexCoord = texcoord;
-    Normal = normal;
-    FragPos = position;
-    poz = coord.xy;
 
 }

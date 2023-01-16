@@ -3,7 +3,7 @@
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
-
+in vec2 poz;
 
 uniform sampler2D oTexture;
 
@@ -16,7 +16,7 @@ void main()
 
     vec3 lightDir = normalize(vec3(0, 10, 10) - FragPos);
 
-    vec4 diff = (dot(Normal, lightDir) + 1.0) * vec4(0.5, 0.5, 0.5, 1.0);
+    vec4 diff = (dot(Normal, lightDir) + 1.0) * vec4(0.5, 0.5, 0.5, 0.5);
 
     vec4 color = (diff * basecolor);
 

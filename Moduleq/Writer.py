@@ -9,6 +9,7 @@ class Text:
         self._batch = batch
         self._Order = []
         self._Queue = 0
+        self._textlist = []
         self.add_text(0,' ',1,0,0,(0,0,0,0),1)
 
     def next_text(self):
@@ -23,6 +24,13 @@ class Text:
                                 color=colorRGBA,width=width, batch=self._batch, multiline=True,)
 
         self._Order.insert(order,[label,Text])
+
+    def show_always(self,Text,punto,x,y,colorRGBA,width):
+
+        label = text.Label(Text,font_name='Comic Sans MS', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
+                                color=colorRGBA,width=width, batch=self._batch, multiline=True,)
+
+        self._textlist.append(label)
 
     def _make_visible(self,line):
 

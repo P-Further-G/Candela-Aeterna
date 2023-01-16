@@ -22,12 +22,12 @@ win = pyglet.window.Window(1280, 620, "Candela Aeterna",
 fps_display = pyglet.window.FPSDisplay(window=win)
 
 
-glEnable( GL_DEPTH_TEST )
-glEnable( GL_CULL_FACE  )
-glEnable(   GL_BLEND    )
-glEnable( GL_TEXTURE_2D )
-
+glEnable(GL_DEPTH_TEST)
+glEnable(GL_CULL_FACE)
+glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+glEnable(GL_TEXTURE_2D)
+
 glDepthFunc(GL_LEQUAL)
 
 win.set_minimum_size(500,300)

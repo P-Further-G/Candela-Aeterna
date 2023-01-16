@@ -14,7 +14,7 @@ class Camera:
         frag_Shader = Shader(frag_source, 'fragment')
         self.program = ShaderProgram(vert_Shader, frag_Shader)
 
-        self.projection= Mat4.perspective_projection(1280/float(620),z_near=0.1, z_far=255,fov=60.0)
+        self.projection= Mat4.perspective_projection(1280/float(620),z_near=0.1, z_far=255,fov=30.0)
         self.modelview = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -15.0, 1.0])
         self.program['projection'] = self.projection
         self.program['modelview'] = self.modelview
@@ -23,20 +23,18 @@ class Camera:
         self.roty = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
 
         self.pos_x = 0.0
-        self.pos_y = 0.0
+        self.pos_y = -15.0
         self.pos_z = -15.0
 
         self.dx = 0.0
-        self.dy = 0.0
+        self.dy = -15.0
         self.dz = -15.0
 
-        self.angle_x = 0
-        self.angle_y = 0
+        self.angle_x = -0.5
+        self.angle_y = 3
 
-        self.angle_dx = 0
-        self.angle_dy = 0
-
-
+        self.angle_dx = -0.5
+        self.angle_dy = 3
 
         self.is_on = False
 
@@ -92,3 +90,35 @@ class Camera:
 
         dx, dy = self.angle_dx - self.angle_x, self.angle_dy - self.angle_y
         self.Rotate(dx*smoothness,dy*smoothness)
+
+    def RTZ(self):
+
+        self.pos_x = 0.0
+        self.pos_y = 0.0
+        self.pos_z = 0.0
+
+        self.dx = 0.0
+        self.dy = 0.0
+        self.dz = -15.0
+
+        self.angle_x = 0
+        self.angle_y = 0
+
+        self.angle_dx = 0
+        self.angle_dy = 0
+
+    def MenuSettings(self):
+
+        self.pos_x = 0.0
+        self.pos_y = -15.0
+        self.pos_z = -15.0
+
+        self.dx = 0.0
+        self.dy = -15.0
+        self.dz = -15.0
+
+        self.angle_x = -0.5
+        self.angle_y = 3
+
+        self.angle_dx = -0.5
+        self.angle_dy = 3

@@ -1,7 +1,6 @@
 import pyglet
 from pyglet.gl import *
 from Moduleq.ObjLoader import ObjLoader
-from Moduleq.Texture import TextureGroup
 from Moduleq.Writer import Text
 
 class Scene:
@@ -15,33 +14,31 @@ class Scene:
         self.batch = pyglet.graphics.Batch()
         self.visible = False
         self.active = False
-        self.group = None
-        self.Text = None
+        self.Text = Text(self.batch)
 
 
     def set_texture(self,path):
 
         self.texture = pyglet.image.load(path).get_texture()
-        self.group = TextureGroup(self.texture,self.shaderprogram)
 
-    def add_object(self,obj):
+    def add_object(self,obj,group):
 
         self.scene_obj[obj['name']] = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3),GL_TRIANGLES, 
-                                                      obj['indices'],batch=self.batch,group=self.group, position=('f',(obj['positions'])),
+                                                      obj['indices'],batch=self.batch,group=group, position=('f',(obj['positions'])),
                                                       normal=('f',(obj['normals'])),
                                                       texcoord=('f',(obj['texcoords'])))
 
-    def add_obj_file(self,name,path):
+    def add_obj_file(self,name,path,group):
 
         vertices, indices, normals, texture = ObjLoader(path)
         obj = self.getobj(name, vertices, indices, normals, texture)
-        self.add_object(obj)
+        self.add_object(obj,group)
 
-    def add_obj_converted(self,name,path):
+    def add_obj_converted(self,name,path,group):
         with open(path,"r") as file:
             data = file.readlines()
             obj = self.getobj(name, list(map(float,data[0].split(' '))), list(map(int,data[1].split(' '))), list(map(float,data[2].split(' '))), list(map(float,data[3].split(' '))))
-            self.add_object(obj)
+            self.add_object(obj,group)
 
     def add_sprite(self,name:str,image, x1:float, y1:float, x2:float, y2:float, z=1.0):
 
@@ -53,7 +50,7 @@ class Scene:
                                     'pos_y1':y1,
                                     'pos_y2':y2-y1}
 
-    def add_button(self,name,x1:float,y1:float,x2:float,y2:float,todo):
+    def add_button(self,name,image,x1:float,y1:float,x2:float,y2:float,todo):
 
         self.buttons[name] = {'pos_x1':x1,
                               'pos_x2':x2,
@@ -61,9 +58,7 @@ class Scene:
                               'pos_y2':y2,
                               'func':todo}
 
-    def add_Text_class(self):
-
-        self.Text = Text(self.batch)
+        self.add_sprite(name,image,x1,y1,x2,y2)
 
 
     def scale_acc_to_window(self,width,height):
