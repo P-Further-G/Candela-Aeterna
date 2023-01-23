@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Models_converted",
     "\\Moduleq",
     "\\Shaders"
   ],
-  "SelectedNode": "\\Candela.py",
+  "SelectedNode": "\\Shaders\\LightFragment.shader",
   "PreviewInSolutionExplorer": false
 }

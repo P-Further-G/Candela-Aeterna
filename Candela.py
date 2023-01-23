@@ -27,7 +27,8 @@ glEnable(GL_CULL_FACE)
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glEnable(GL_TEXTURE_2D)
-
+glLineWidth(GLfloat(10.0))
+glPointSize(GLfloat(10.0))
 glDepthFunc(GL_LEQUAL)
 
 win.set_minimum_size(500,300)
@@ -64,6 +65,14 @@ def on_mouse_press(x, y, button, modifiers):
 
 
 @win.event
+def on_mouse_release(x,y,button,modifers):
+
+    engine.on_release()
+
+
+
+
+@win.event
 def on_mouse_scroll(x, y, scroll_x, scroll_y):
 
     engine.on_scroll(scroll_y)
@@ -74,7 +83,7 @@ def on_mouse_scroll(x, y, scroll_x, scroll_y):
 @win.event
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
 
-    if buttons & pyglet.window.mouse.LEFT: engine.on_drag(dx,dy)
+    if buttons & pyglet.window.mouse.LEFT: engine.on_drag(x,y,dx,dy)
 
 
 
