@@ -1,5 +1,6 @@
 import pyglet
 from pyglet.gl import *
+from math import sin,cos,radians
 from Moduleq.ObjLoader import ObjLoader
 from Moduleq.Writer import Text
 
@@ -10,6 +11,8 @@ class Scene:
         self.scene_obj = {}
         self.scene_sprites = {}
         self.buttons = {}
+        self.beams = {}
+        self.points = {}
         self.shaderprogram = shader.program
         self.batch = pyglet.graphics.Batch()
         self.visible = False
@@ -27,6 +30,39 @@ class Scene:
                                                       obj['indices'],batch=self.batch,group=group, position=('f',(obj['positions'])),
                                                       normal=('f',(obj['normals'])),
                                                       texcoord=('f',(obj['texcoords'])))
+    
+    def add_beam(self,name,group,xyz):
+
+        self.beams[name] = [self.shaderprogram.vertex_list(2,GL_LINES,batch=self.batch,group=group,position=('f',xyz), type=('b',(1,1))), xyz]
+        self.points[name] = self.shaderprogram.vertex_list(2,GL_POINTS,batch=self.batch,group=group,position=('f',xyz), type=('b',(0,0)))
+
+    def _change_beam(self,name,xyz):
+
+        self.beams[name][0].set_attribute_data("position", xyz)
+        self.points[name].set_attribute_data("position", xyz)
+
+    def rotate_beam(self,name,degree,anchor):
+
+        xyz = self.beams[name][1]
+        d = -radians(degree)
+
+        if anchor == 1:
+            x = xyz[3] - xyz[0]
+            y = xyz[4] - xyz[1]
+            x2 = x*cos(d) - y*sin(d) + xyz[0]
+            y2 = x*sin(d) + y*cos(d) + xyz[1]
+            data = (xyz[0],xyz[1],xyz[2],x2,y2,xyz[5])
+
+        if anchor == 2:
+            x = xyz[0] - xyz[3]
+            y = xyz[1] - xyz[4]
+            x2 = x*cos(d) - y*sin(d)
+            y2 = x*sin(d) + y*cos(d)
+            data = (xyz[0],x2,y2,xyz[3],xyz[4],xyz[5])
+
+        self._change_beam(name,data)
+
+
 
     def add_obj_file(self,name,path,group):
 

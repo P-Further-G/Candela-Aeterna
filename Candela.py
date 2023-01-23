@@ -27,7 +27,8 @@ glEnable(GL_CULL_FACE)
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glEnable(GL_TEXTURE_2D)
-
+glLineWidth(GLfloat(10.0))
+glPointSize(GLfloat(10.0))
 glDepthFunc(GL_LEQUAL)
 
 win.set_minimum_size(500,300)

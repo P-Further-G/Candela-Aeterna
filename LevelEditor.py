@@ -1,7 +1,7 @@
 import pyglet
 from Moduleq.Scene import Scene
 from Moduleq.Camera import Camera
-from Moduleq.Texture import TextureGroup, bgroup
+from Moduleq.Texture import TextureGroup, bgroup, Beam_Group
 
 foto = pyglet.image.load('resources/menü.png')
 
@@ -11,8 +11,9 @@ class Level():
 
         self.CURRENT_LEVEL = 0
         self.Camera = Camera('Shaders/VertexShader.shader','Shaders/FragmentShader.shader')
-        self.Black_cam = Camera('Shaders/plainvertex.shader','Shaders/plainshader.shader')
+        self.Lightning = Camera('Shaders/LightVertex.shader','Shaders/LightFragment.shader')
         self.window = win
+        self.time = 0
 
     #=============================================================>
 
@@ -22,16 +23,16 @@ class Level():
         self.menu.visible = True
         self.menu.set_texture("resources/Kup.png")
         self.grup1 = TextureGroup(self.menu.texture,self.Camera)
-        self.grup2 = bgroup(self.Black_cam)
+        self.lightgroup = Beam_Group(self.Lightning,win)
 
         self.menu.add_obj_converted("lab","Models_converted/Lab.txt",self.grup1)
-        self.menu.add_obj_converted("lab","Models_converted/Lab.txt",self.grup2)
         self.menu.add_button('tuttifurti',foto,0.025,0.6,0.1,0.7,self._openlvl1)
         self.menu.Text.show_always("Küp",25,5,500,(160,0,0,255),500)
         self.menu.add_button('tuttifurti2',foto,0.025,0.4,0.1,0.5,self._openlvl2)
         self.menu.Text.show_always("Ortam",25,5,350,(0,0,0,255),500)
         self.menu.add_button('tuttifurti3',foto,0.025,0.2,0.1,0.3,self._openlvl3)
         self.menu.Text.show_always("Yazı",25,5,250,(0,0,0,255),500)
+        self.menu.add_button('tuttifurti4',foto,0.025,0.05,0.1,0.18,self._openlvl4)
 
 
     #=>
@@ -39,13 +40,12 @@ class Level():
         self.kup1.set_texture("resources/Kup.png")
         self.grup3 = TextureGroup(self.kup1.texture,self.Camera)
         self.kup1.add_obj_converted("heyo","Models_converted/Lab.txt",self.grup3)
-        self.kup1.add_obj_converted("heyo","Models_converted/Lab.txt",self.grup2)
         self.kup1.add_button('huuh',foto,0.06,0.8,0.13,0.96,self._returntomenu)
 
         self.kup2 = Scene(self.Camera)
-        self.kup2.set_texture("resources/Kup.png")
-        self.kup2.add_obj_converted("hey","Models_converted/Kure.txt",self.grup1)
-        self.kup2.add_obj_converted("hey","Models_converted/Kure.txt",self.grup2)
+        self.kup2.set_texture("resources/texture.png")
+        self.grup2 = TextureGroup(self.kup2.texture,self.Camera)
+        self.kup2.add_obj_converted("hey","Models_converted/Env1.txt",self.grup1)
         self.kup2.add_button('huuh',foto,0.06,0.8,0.13,0.96,self._returntomenu2)
         
         self.metin = Scene(self.Camera)
@@ -55,6 +55,10 @@ class Level():
         self.metin.Text.add_text(1,cümle,16,500,400,(150,70,0,255),500)
         self.metin.Text.add_text(2,"aaaaA",22,500,400,(150,70,0,50),500)
 
+        self.Reflect = Scene(self.Lightning)
+        self.Reflect.add_beam("aa",self.lightgroup,(5,0,2, -5,0,2))
+        self.Reflect.add_beam("bb",self.lightgroup,(5,0,2, -5,0,2))
+
     #=============================================================>
 
 
@@ -63,8 +67,8 @@ class Level():
         self.Camera.projection = pyglet.math.Mat4.perspective_projection(width/float(height),z_near=0.1, z_far=255,fov=50.0)
         self.Camera.program['projection'] = self.Camera.projection
 
-        self.Black_cam.projection = pyglet.math.Mat4.perspective_projection(width/float(height),z_near=0.1, z_far=255,fov=50.0)
-        self.Black_cam.program['projection'] = self.Black_cam.projection
+        self.Lightning.projection = pyglet.math.Mat4.perspective_projection(width/float(height),z_near=0.1, z_far=255,fov=50.0)
+        self.Lightning.program['projection'] = self.Lightning.projection
 
     def scale(self,width,height):
 
@@ -87,29 +91,36 @@ class Level():
                                      self.Camera.pos_y,
                                      self.Camera.pos_z + 2*scroll_y)
 
-        if self.Black_cam.is_on:
-            self.Black_cam.will_move_to(self.Black_cam.pos_x, 
-                                     self.Black_cam.pos_y,
-                                     self.Black_cam.pos_z + 2*scroll_y)
+
+        if self.Lightning.is_on:
+            self.Lightning.will_move_to(self.Lightning.pos_x, 
+                                     self.Lightning.pos_y,
+                                     self.Lightning.pos_z + 2*scroll_y)
 
     def on_drag(self,dx,dy):
 
         if self.Camera.is_on:
             self.Camera.will_rotate_to(self.Camera.angle_x + dy/20, self.Camera.angle_y + -dx/20)
 
-        if self.Black_cam.is_on:
-            self.Black_cam.will_rotate_to(self.Black_cam.angle_x + dy/20, self.Black_cam.angle_y + -dx/20)
+        if self.Lightning.is_on:
+            self.Lightning.will_rotate_to(self.Lightning.angle_x + dy/20, self.Lightning.angle_y + -dx/20)
+
 
     def on_update(self,dt):
+
+        self.time += dt
 
         self.Camera.Smooth_Translate(5*dt)
         self.Camera.Smooth_Rotate(3*dt)
 
-        self.Black_cam.Smooth_Translate(5*dt)
-        self.Black_cam.Smooth_Rotate(3*dt)
+        self.Lightning.Smooth_Translate(5*dt)
+        self.Lightning.Smooth_Rotate(3*dt)
 
         if self.CURRENT_LEVEL == 0: self.Camera.will_rotate_to(self.Camera.angle_x, self.Camera.angle_dy + 0.5*dt)
-        if self.CURRENT_LEVEL == 0: self.Black_cam.will_rotate_to(self.Black_cam.angle_x, self.Black_cam.angle_dy + 0.5*dt)
+
+        if self.Lightning.is_on:
+
+            self.Lightning.program['utime'] = self.time
 
     #=============================================================>
 
@@ -126,84 +137,110 @@ class Level():
         if self.CURRENT_LEVEL == 2:
 
             self.kup2.render()
+            #self.Reflect.render()
 
         if self.CURRENT_LEVEL == 3:
 
             self.metin.render()
 
+        if self.CURRENT_LEVEL == 4:
+
+            self.Reflect.render()
+
 
     def _openlvl1(self):
 
-        self.Camera.RTZ()
-        self.Black_cam.RTZ()
+        self.Camera.MenuSettings()
         self.CURRENT_LEVEL = 1
         self.menu.visible = False
         self.menu.active = False
         self.kup1.active = True
         self.kup1.visible = True
         self.Camera.is_on = True
-        self.Black_cam.is_on = True
+
 
     def _openlvl2(self):
 
         self.Camera.RTZ()
-        self.Black_cam.RTZ()
+        self.Lightning.RTZ()
         self.CURRENT_LEVEL = 2
         self.menu.visible = False
         self.menu.active = False
         self.kup2.active = True
         self.kup2.visible = True
         self.Camera.is_on = True
-        self.Black_cam.is_on = True
+
+        self.Reflect.active = True
+        self.Reflect.visible = True
+        self.Lightning.is_on = True
 
     def _openlvl3(self):
 
         self.Camera.RTZ()
-        self.Black_cam.RTZ()
         self.CURRENT_LEVEL = 3
         self.menu.visible = False
         self.menu.active = False
         self.metin.active = True
         self.metin.visible = True
         self.Camera.is_on = False
-        self.Black_cam.is_on = False
 
+
+    def _openlvl4(self):
+
+        self.Camera.RTZ()
+        self.Lightning.RTZ()
+        self.CURRENT_LEVEL = 4
+        self.menu.visible = False
+        self.menu.active = False
+        self.Reflect.active = True
+        self.Reflect.visible = True
+        self.Camera.is_on = False
+        self.Lightning.is_on = True
 
     def _returntomenu(self):
 
         self.Camera.MenuSettings()
-        self.Black_cam.MenuSettings()
         self.CURRENT_LEVEL = 0
         self.menu.visible = True
         self.menu.active = True
         self.kup1.active = False
         self.kup1.visible = False
         self.Camera.is_on = False
-        self.Black_cam.is_on = False
 
     def _returntomenu2(self):
 
         self.Camera.MenuSettings()
-        self.Black_cam.MenuSettings()
         self.CURRENT_LEVEL = 0
         self.menu.visible = True
         self.menu.active = True
         self.kup2.active = False
         self.kup2.visible = False
         self.Camera.is_on = False
-        self.Black_cam.is_on = False
+
+        self.Reflect.active = False
+        self.Reflect.visible = False
+        self.Lightning.is_on = False
 
     def _returntomenu3(self):
 
         self.Camera.MenuSettings()
-        self.Black_cam.MenuSettings()
         self.CURRENT_LEVEL = 0
         self.menu.visible = True
         self.menu.active = True
         self.metin.active = False
         self.metin.visible = False
         self.Camera.is_on = False
-        self.Black_cam.is_on = False
+
+    def _returntomenu4(self):
+
+        self.Camera.MenuSettings()
+        self.CURRENT_LEVEL = 0
+        self.menu.visible = True
+        self.menu.active = True
+        self.Reflect.active = False
+        self.Reflect.visible = False
+        self.Camera.is_on = False
+        self.Lightning.is_on = False
 
     def _changetext(self):
 

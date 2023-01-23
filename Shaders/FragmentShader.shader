@@ -3,7 +3,7 @@
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
-in vec2 poz;
+in vec3 Cam_Pos;
 
 uniform sampler2D oTexture;
 
@@ -12,17 +12,26 @@ out vec4 Color;
 
 void main()
 {
+    vec3 lightcolor = vec3(.8, .8, .8);
+    float specularStrength = 0.5;
+    float diffuseStrength = 0.5;
     vec4 basecolor = texture(oTexture, TexCoord);
 
-    vec3 lightDir = normalize(vec3(0, 10, 10) - FragPos);
 
-    vec4 diff = (dot(Normal, lightDir) + 1.0) * vec4(0.5, 0.5, 0.5, 0.5);
+    vec3 ambient = 0.1 * lightcolor;
 
-    vec4 color = (diff * basecolor);
+    vec3 lightDir = normalize(vec3(0,10,0) - FragPos);
+    float diff = (dot(Normal, lightDir) + 1);
+    vec3 diffuse = diff * lightcolor * diffuseStrength;
 
-    vec4 finalcolor = color;
 
-    Color = min(vec4(1.0, 1.0, 1.0, 1.0), finalcolor);
+    vec3 viewDir = normalize(Cam_Pos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, Normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0),16);
+    vec3 specular = specularStrength * spec * lightcolor;
 
+    vec3 result = (ambient + diffuse + specular) * basecolor.xyz;
+
+    Color = vec4(result, basecolor.w);
 
 }
