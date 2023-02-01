@@ -208,8 +208,6 @@ class Scene:
                     slider['value'] = 0
 
 
-
-
         return flag
 
     def release_event(self):
