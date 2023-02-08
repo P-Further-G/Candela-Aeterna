@@ -7,8 +7,8 @@ flat in int Line;
 in float Time;
 
 
-#define STRIP 10.0
-#define SPEED 10.0
+#define STRIP 1.0
+#define SPEED 5.0
 #define POINTSIZE 3.5
 
 void main()

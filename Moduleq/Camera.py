@@ -23,11 +23,11 @@ class Camera:
         self.roty = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
 
         self.pos_x = 0.0
-        self.pos_y = -15.0
+        self.pos_y = -10.0
         self.pos_z = -15.0
 
         self.dx = 0.0
-        self.dy = -15.0
+        self.dy = -10.0
         self.dz = -15.0
 
         self.angle_x = -0.5
@@ -53,6 +53,16 @@ class Camera:
 
 
         self.angle_y += dy
+
+        if self.angle_y > 6.283: 
+
+            self.angle_dy -= 6.283
+            self.angle_y -= 6.283
+
+        if self.angle_y < -6.283:
+
+            self.angle_dy += 6.283
+            self.angle_y += 6.283
 
         self.rotx= Mat4([1,0,0,0,0,cos(self.angle_x),-sin(self.angle_x),0,0,sin(self.angle_x),cos(self.angle_x),0,0,0,0,1])
 
@@ -98,7 +108,7 @@ class Camera:
         self.pos_z = 0.0
 
         self.dx = 0.0
-        self.dy = 0.0
+        self.dy = -7.0
         self.dz = -15.0
 
         self.angle_x = 0
@@ -110,11 +120,11 @@ class Camera:
     def MenuSettings(self):
 
         self.pos_x = 0.0
-        self.pos_y = -15.0
+        self.pos_y = -10.0
         self.pos_z = -15.0
 
         self.dx = 0.0
-        self.dy = -15.0
+        self.dy =  -10.0
         self.dz = -15.0
 
         self.angle_x = -0.5

@@ -3,7 +3,9 @@
     "",
     "\\Models_converted",
     "\\Moduleq",
+    "\\resources",
     "\\Shaders"
   ],
+  "SelectedNode": "\\Shaders\\FragmentShader.shader",
   "PreviewInSolutionExplorer": false
 }
