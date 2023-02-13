@@ -1,7 +1,8 @@
 import pyglet
 from Moduleq.Scene import Scene
 from Moduleq.Camera import Camera
-from Moduleq.Texture import TextureGroup, bgroup, Beam_Group
+from Moduleq.Texture import TextureGroup, TextureGlassGroup, Beam_Group
+from Moduleq.Metin import *
 
 etiket1 = pyglet.image.load('resources/Etiket1_Simülasyonlar.png')
 etiket2 = pyglet.image.load('resources/Etiket2_Ayarlar.png')
@@ -30,20 +31,16 @@ class Level():
         self.menu.visible = True
 
         self.menu_texture = pyglet.image.load("resources/texture.jpg").get_texture()
-        self.ortam2_texture = pyglet.image.load("resources/texture.png").get_texture()
-
+        self.cam_texture = pyglet.image.load("resources/cam.png").get_texture()
 
         self.grup1 = TextureGroup(self.menu_texture,self.Camera)
-        self.grup2 = TextureGroup(self.ortam2_texture,self.Camera)
+        self.grup2 = TextureGlassGroup(self.cam_texture,self.Camera)
         self.lightgroup = Beam_Group(self.Lightning,win)
 
 
-        self.Reflect = Scene(self.Lightning)
-        self.Reflect.add_beam("a0",self.lightgroup,(0,    5,    0,   0,   5,  -4))
-        self.Reflect.add_beam("a1",self.lightgroup,(0,    5,   -4,   0,   5,  -8))
 
 
-        self.menu.add_obj_converted("lab","Models_converted/SonLab.txt",self.grup1,offset=(15,0,25))
+        self.menu.add_obj_converted("lab","Models_converted/SonLab.txt",self.grup1,offset=(15,-10,25))
 
         self.menu0 = Scene(self.Camera)
         self.menu0.active = True
@@ -69,15 +66,21 @@ class Level():
 
 
         self.kup1 = Scene(self.Camera)
-        self.kup1.add_obj_converted("heyo","Models_converted/Torch.txt",self.grup1,offset=(0,5,5))
+
+        self.kup1.add_obj_converted("heyo","Models_converted/Fener.txt",self.grup1,offset=(0,0,2))
+        self.kup1.add_obj_converted("cam","Models_converted/ince_mercek.txt",self.grup2,offset=(0,0,0))
+
         self.kup1.add_button('huuh',etiket4,0.025,0.775,0.155,0.925,self._returntomenu)
         self.kup1.add_slider("sürükleme",slider2,slider1,0.7,0.9,0.9,0.93,90)
 
+        self.Reflect = Scene(self.Lightning)
+        self.Reflect.add_beam("a0",self.lightgroup,(0,    0,    2,   0,   0,  0))
+        self.Reflect.add_beam("a1",self.lightgroup,(0,    0,    0,   0,   0,  -8))
 
-        self.kup2 = Scene(self.Camera)
-        self.kup2.add_obj_converted("hey","Models_converted/Torch.txt",self.grup1,offset=(0,0,5))
-        self.kup2.add_button('huuh',etiket4,0.025,0.775,0.155,0.925,self._returntomenu2)
-        self.kup2.add_slider("sürükleme",slider2,slider1,0.5,0.9,0.7,0.93,90,value=45)
+        self.konuanlatımı1 = Scene(self.Camera)
+        self.konuanlatımı1.Text.add_text(1,metin1,24,100,500,(0,0,0,255),500)
+        self.konuanlatımı1.Text.add_text(2,metin2,24,100,500,(0,0,0,255),500)
+        self.konuanlatımı1.add_button("nexto",play,0.025,0.075,0.155,0.225,self.next_text)
         
 
     #=============================================================>
@@ -97,7 +100,7 @@ class Level():
         self.menu0.scale_acc_to_window(width,height)
         self.menu1.scale_acc_to_window(width,height)
         self.kup1.scale_acc_to_window(width,height)
-        self.kup2.scale_acc_to_window(width,height)
+        self.konuanlatımı1.scale_acc_to_window(width,height)
 
     def on_click(self,x,y):
 
@@ -105,7 +108,7 @@ class Level():
         self.menu0.click_event(self.window,x,y)
         self.menu1.click_event(self.window,x,y)
         self.kup1.click_event(self.window,x,y)
-        self.kup2.click_event(self.window,x,y)
+        self.konuanlatımı1.click_event(self.window,x,y)
 
     def on_release(self):
 
@@ -168,14 +171,14 @@ class Level():
         if self.CURRENT_LEVEL == 1:
 
             self.menu.render()
-            self.kup1.render()
             self.Reflect.render()
+            self.kup1.render()
 
         if self.CURRENT_LEVEL == 2:
 
             self.Reflect.render()
-            self.kup2.render()
-
+            self.kup1.render()
+            self.konuanlatımı1.render()
 
     def _openlvl1(self):
 
@@ -202,14 +205,18 @@ class Level():
         self.Camera.RTZ()
         self.Lightning.RTZ()
         self.CURRENT_LEVEL = 2
+
         self.menu.visible = False
         self.menu.active = False
-        self.kup2.active = True
-        self.kup2.visible = True
-        self.Camera.is_on = True
-
+        self.menu0.visible = False
+        self.menu0.active = False
+        self.kup1.active = True
+        self.kup1.visible = True
         self.Reflect.active = True
         self.Reflect.visible = True
+        self.konuanlatımı1.visible = True
+        self.konuanlatımı1.active = True
+        self.Camera.is_on = True
         self.Lightning.is_on = True
 
 
@@ -237,9 +244,11 @@ class Level():
         self.CURRENT_LEVEL = 0
         self.menu.visible = True
         self.menu.active = True
-        self.kup2.active = False
-        self.kup2.visible = False
+        self.kup1.active = False
+        self.kup1.visible = False
         self.Camera.is_on = False
+        self.konuanlatımı1.visible = False
+        self.konuanlatımı1.active = False
 
         self.Reflect.active = False
         self.Reflect.visible = False
@@ -253,7 +262,7 @@ class Level():
 
         self.CURRENT_LEVEL = 0.5
         self.Camera.will_rotate_to(0,0)
-        self.Camera.will_move_to(-4,-10,8)
+        self.Camera.will_move_to(-4,0,8,limit=False)
 
         self.Camera.is_on = False
         self.Lightning.is_on = False
@@ -262,9 +271,11 @@ class Level():
 
     def _open_menu1(self,dt):
         self.menu0.active = False
-        self.menu0.visible = True
+        self.menu0.visible = False
         self.menu1.visible = True
         self.menu1.active = True
 
+    def next_text(self):
 
+        self.konuanlatımı1.Text.next_text()
 

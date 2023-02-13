@@ -1,11 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Models_converted",
     "\\Moduleq",
-    "\\resources",
     "\\Shaders"
   ],
-  "SelectedNode": "\\Shaders\\FragmentShader.shader",
+  "SelectedNode": "\\Moduleq\\Metin.py",
   "PreviewInSolutionExplorer": false
 }

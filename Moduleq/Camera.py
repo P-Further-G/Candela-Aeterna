@@ -23,11 +23,11 @@ class Camera:
         self.roty = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
 
         self.pos_x = 0.0
-        self.pos_y = -10.0
+        self.pos_y = 0.0
         self.pos_z = -15.0
 
         self.dx = 0.0
-        self.dy = -10.0
+        self.dy = 0.0
         self.dz = -15.0
 
         self.angle_x = -0.5
@@ -73,18 +73,26 @@ class Camera:
 
     def Translate(self, tx, ty, tz):
 
+
+        self.pos_z += tz
         self.pos_x += tx
         self.pos_y += ty
-        self.pos_z += tz
 
         self.modelview = Mat4([ *self.modelview[0:12], self.pos_x, self.pos_y, self.pos_z, 1])
         self.program['modelview'] = self.roty @ self.rotx @ self.modelview
 
-    def will_move_to(self,dx,dy,dz):
+    def will_move_to(self,dx,dy,dz,limit=True):
+
+        if limit and not -3 >= dz: 
+            
+            self.dz = self.pos_z
+
+        else:
+
+            self.dz = dz
 
         self.dx = dx
         self.dy = dy
-        self.dz = dz
 
     def Smooth_Translate(self,smoothness):
 
@@ -105,10 +113,10 @@ class Camera:
 
         self.pos_x = 0.0
         self.pos_y = 0.0
-        self.pos_z = 0.0
+        self.pos_z = -3.0
 
         self.dx = 0.0
-        self.dy = -7.0
+        self.dy = 0.0
         self.dz = -15.0
 
         self.angle_x = 0
@@ -120,11 +128,11 @@ class Camera:
     def MenuSettings(self):
 
         self.pos_x = 0.0
-        self.pos_y = -10.0
+        self.pos_y = 0.0
         self.pos_z = -15.0
 
         self.dx = 0.0
-        self.dy =  -10.0
+        self.dy =  0.0
         self.dz = -15.0
 
         self.angle_x = -0.5
