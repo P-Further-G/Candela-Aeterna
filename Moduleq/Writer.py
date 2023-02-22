@@ -1,6 +1,6 @@
 from pyglet import gl, text, font
 
-font.add_file('resources/def_font.ttf')
+font.add_file('resources/AndikaNewBasic.ttf')
 
 class Text:
 
@@ -10,7 +10,7 @@ class Text:
         self._Order = []
         self._Queue = 0
         self._textlist = []
-        self.add_text(0,' ',1,0,0,(0,0,0,0),1)
+        self.add_text(0,' ',1,0,0,(0,0,0,0),1,0,0)
 
     def next_text(self):
 
@@ -18,17 +18,17 @@ class Text:
         self._Queue += 1
         self._make_visible(self._Queue)
 
-    def add_text(self,order,Text,punto,x,y,colorRGBA,width):
+    def add_text(self,order,Text,punto,x,y,colorRGBA,width,w,h):
 
-        label = text.Label(' ',font_name='Comic Sans MS', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
-                                color=colorRGBA,width=width, batch=self._batch, multiline=True,)
+        label = text.Label(' ',font_name='Andika New Basic', font_size=punto,x=x*w,y=y*h,anchor_x='left',anchor_y='top',
+                                color=colorRGBA,width=width, batch=self._batch,align='center', multiline=True,)
 
-        self._Order.insert(order,[label,Text])
+        self._Order.insert(order,[label,Text,x,y])
 
     def show_always(self,Text,punto,x,y,colorRGBA,width):
 
-        label = text.Label(Text,font_name='Comic Sans MS', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
-                                color=colorRGBA,width=width, batch=self._batch, multiline=True,)
+        label = text.Label(Text,font_name='Andika New Basic', font_size=punto,x=x,y=y,anchor_x='left',anchor_y='top',
+                                color=colorRGBA,width=width, batch=self._batch, align='center', multiline=True,)
 
         self._textlist.append(label)
 
@@ -44,3 +44,11 @@ class Text:
     def _make_unvisible(self,line):
 
         self._Order[line][0].text = ' '
+
+    def resize_text(self,w,h):
+
+        for tg in self._Order:
+
+            tg[0].x = tg[2]*w
+            tg[0].y = tg[3]*h
+

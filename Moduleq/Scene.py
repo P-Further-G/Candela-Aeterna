@@ -170,6 +170,8 @@ class Scene:
             sprite['sprite_data'].scale_x = width/sprite['width']*sprite['pos_x2']
             sprite['sprite_data'].scale_y = height/sprite['height']*sprite['pos_y2']
 
+        self.Text.resize_text(width,height)
+
 
     def drag_event(self,win,x,y):
 

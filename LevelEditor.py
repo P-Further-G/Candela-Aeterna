@@ -12,6 +12,7 @@ başlık  = pyglet.image.load('resources/CandelaAeterna.png')
 play    = pyglet.image.load('resources/menü.png')
 slider1 = pyglet.image.load("resources/slider1.png")
 slider2 = pyglet.image.load("resources/slider2.png")
+arkaplan= pyglet.image.load("resources/arkaplan.png")
 
 class Level():
 
@@ -47,9 +48,9 @@ class Level():
         self.menu0.visible = True
 
         self.menu0.add_sprite("başlık",başlık,0.025,0.675,0.255,0.925)
-        self.menu0.add_button('tuttifurti',etiket1,0.025,0.475,0.155,0.625,self._move_to_board)
-        self.menu0.add_button('tuttifurti2',etiket2,0.025,0.275,0.155,0.425,self._openlvl2)
-        self.menu0.add_button('tuttifurti3',etiket3,0.025,0.075,0.155,0.225,self._exit)
+        self.menu0.add_button('tuttifurti',etiket1,0.025,0.475,0.175,0.635,self._move_to_board)
+        self.menu0.add_button('tuttifurti2',etiket2,0.025,0.275,0.175,0.435,self._openlvl2)
+        self.menu0.add_button('tuttifurti3',etiket3,0.025,0.075,0.175,0.235,self._exit)
 
         self.menu1 = Scene(self.Camera)
 
@@ -78,9 +79,11 @@ class Level():
         self.Reflect.add_beam("a1",self.lightgroup,(0,    0,    0,   0,   0,  -8))
 
         self.konuanlatımı1 = Scene(self.Camera)
-        self.konuanlatımı1.Text.add_text(1,metin1,24,100,500,(0,0,0,255),500)
-        self.konuanlatımı1.Text.add_text(2,metin2,24,100,500,(0,0,0,255),500)
-        self.konuanlatımı1.add_button("nexto",play,0.025,0.075,0.155,0.225,self.next_text)
+        self.konuanlatımı1.add_sprite("arka",arkaplan, 0.025,0.1,0.35,0.65,z=0)
+        self.konuanlatımı1.Text.add_text(1,metin1,20,0.07,0.57,(0,0,0,255),300,self.window.width,self.window.height)
+        self.konuanlatımı1.Text.add_text(2,metin2,20,0.07,0.57,(0,0,0,255),300,self.window.width,self.window.height)
+        self.konuanlatımı1.Text.add_text(3,metin3,20,0.07,0.57,(0,0,0,255),300,self.window.width,self.window.height)
+        self.konuanlatımı1.add_button("nexto",play,0.025,0.1,0.1,0.2,self.next_text)
         
 
     #=============================================================>
