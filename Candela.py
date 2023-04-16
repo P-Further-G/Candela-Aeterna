@@ -20,20 +20,21 @@ win = pyglet.window.Window(1280, 620, "Candela Aeterna",
 
 
 fps_display = pyglet.window.FPSDisplay(window=win)
-
+pyglet.image.Texture.default_min_filter = GL_LINEAR
+pyglet.image.Texture.default_mag_filter = GL_LINEAR
 
 glEnable(GL_DEPTH_TEST)
 glEnable(GL_CULL_FACE)
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 glEnable(GL_TEXTURE_2D)
-glLineWidth(GLfloat(10.0))
+glLineWidth(GLfloat(5.0)) 
 glPointSize(GLfloat(10.0))
-glDepthFunc(GL_LEQUAL)
+glDepthFunc(GL_LEQUAL)    
 
 win.set_minimum_size(500,300)
 
-glClearColor(0.7,0.7,1.0,1.0)
+glClearColor(0.3,0.3,0.3,1.0)
 
 engine = Level(win)
 
