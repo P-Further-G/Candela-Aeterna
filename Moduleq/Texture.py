@@ -3,34 +3,6 @@ from pyglet.gl import *
 import ctypes
 
 
-def ShadowMap(width,height):
-
-    shadowmapFBO = GLuint(0)
-    glGenFramebuffers(1, shadowmapFBO)
-
-    smWidth = ctypes.c_uint(width)
-    smHeight = ctypes.c_uint(height)
-    shadowmap = GLuint(0)
-    glGenTextures(1, shadowmap)
-    glBindTexture(GL_TEXTURE_2D, shadowmap)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, smWidth, smHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, None)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
-
-    glBindFrameBuffer(GL_FRAMEBUFFER, shadowmapFBO)
-    glFrameBufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowmap, 0)
-    glDrawBuffer(GL_NONE)
-    glReadBuffer(GL_NONE)
-    glBindFrameBuffer(GL_FRAMEBUFFER, 0)
-
-    return shadowmapFBO, shadowmap
-
-
-
-
-
 class TextureGroup(pyglet.graphics.Group):
     def __init__(self, texture, shaderprogram):
         super().__init__()
@@ -42,25 +14,62 @@ class TextureGroup(pyglet.graphics.Group):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.program.program.use()
         self.program.program['projection'] = self.program.projection
-        self.program.program['modelview'] = self.program.modelview @ self.program.rotx @ self.program.roty
+        self.program.program['model'] = self.program.model @ self.program.rotx @ self.program.roty
+        self.program.program['view'] = self.program.view
+
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.texture)
 
     def unset_state(self):
         self.program.program.stop()
 
-class TextureShadowGroup(pyglet.graphics.Group):
-    def __init__(self):
-        super().__init__()
 
+class ShadowGroup(pyglet.graphics.Group):
+    def __init__(self, fbo, win, shaderprogram, model):
+        super().__init__()
+        self.win = win
+        self.program = shaderprogram
+        self.fbo = fbo
+        self.model = model
+
+    def set_state(self):
+
+        self.program.program.use()
+        self.program.program['projection'] = self.program.projection
+        self.program.program['depth_matrix'] = self.model.model
+        self.program.program['view'] = self.program.view
+
+    def unset_state(self):
+
+        self.program.program.stop()
+
+class TextureShadowGroup(pyglet.graphics.Group):
+    def __init__(self, fbo, win, shaderprogram, view ,texture):
+        super().__init__()
+        self.fbo = fbo
+        self.win = win
+        self.program = shaderprogram
+        self.texture = texture.id
+        self.lightview = view
 
     def set_state(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDisable(GL_CULL_FACE)
+        self.program.program.use()
+        self.program.program['projection'] = self.program.projection
+        self.program.program['model'] = self.program.model @ self.program.rotx @ self.program.roty
+        self.program.program['view'] = self.program.view
+        
+        self.program.program['lightview'] = self.lightview.view
+
+        self.program.program['oTexture'] = 0
+        self.program.program['shadowmap'] = 1
+
+
 
     def unset_state(self):
-        glEnable(GL_CULL_FACE)
+        self.program.program.stop()
+
 
 class TextureGlassGroup(pyglet.graphics.Group):
     def __init__(self, texture, shaderprogram):
@@ -73,7 +82,8 @@ class TextureGlassGroup(pyglet.graphics.Group):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.program.program.use()
         self.program.program['projection'] = self.program.projection
-        self.program.program['modelview'] = self.program.modelview @ self.program.rotx @ self.program.roty
+        self.program.program['model'] = self.program.model @ self.program.rotx @ self.program.roty
+        self.program.program['view'] = self.program.view
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.texture)
 
@@ -92,7 +102,8 @@ class bgroup(pyglet.graphics.Group):
 
         self.program.program.use()
         self.program.program['projection'] = self.program.projection
-        self.program.program['modelview'] = self.program.modelview @ self.program.rotx @ self.program.roty
+        self.program.program['model'] = self.program.model @ self.program.rotx @ self.program.roty
+        self.program.program['view'] = self.program.view
 
     def unset_state(self):
 
@@ -113,7 +124,8 @@ class Beam_Group(pyglet.graphics.Group):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         self.program.program.use()
         self.program.program['projection'] = self.program.projection
-        self.program.program['modelview'] = self.program.modelview @ self.program.rotx @ self.program.roty
+        self.program.program['model'] = self.program.model @ self.program.rotx @ self.program.roty
+        self.program.program['view'] = self.program.view
         self.program.program['u_viewport'] = self.win.get_framebuffer_size()
 
     def unset_state(self):

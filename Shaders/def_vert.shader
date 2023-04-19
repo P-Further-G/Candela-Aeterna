@@ -9,17 +9,18 @@ out vec3 FragPos;
 out vec3 Cam_Pos;
 
 uniform mat4 projection;
-uniform mat4 modelview;
+uniform mat4 model;
+uniform mat4 view;
 
 void main()
 {
 
-    vec4 coord = projection * modelview * vec4(position, 1.0);
+    vec4 coord = projection * view * model * vec4(position, 1.0);
 
     gl_Position = coord;
     TexCoord = texcoord;
-    Normal = normalize(mat3(transpose(inverse(modelview))) * normal);
-    FragPos = vec3(modelview * vec4(position, 1.0));
-    Cam_Pos = vec3(modelview[0][3], modelview[1][3], modelview[2][3]);
+    Normal = normalize(mat3(transpose(inverse(model))) * normal);
+    FragPos = vec3(model * vec4(position, 1.0));
+    Cam_Pos = vec3(view[0][3],view[1][3], view[2][3]);
 
 }

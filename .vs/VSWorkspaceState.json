@@ -1,9 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\resources",
+    "\\Moduleq",
     "\\Shaders"
   ],
-  "SelectedNode": "\\Candela.py",
+  "SelectedNode": "\\Shaders\\shadow_frag.shader",
   "PreviewInSolutionExplorer": false
 }

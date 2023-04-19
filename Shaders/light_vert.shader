@@ -9,7 +9,8 @@ out float Time;
 flat out int Line;
 
 uniform mat4 projection;
-uniform mat4 modelview;
+uniform mat4 model;
+uniform mat4 view;
 uniform vec2 u_viewport;
 uniform float utime;
 
@@ -18,7 +19,7 @@ void main()
     FragPos = position;
     FlatFragPos = position;
 
-    vec4 coord = projection * modelview * vec4(position, 1.0);
+    vec4 coord = projection * view * model * vec4(position, 1.0);
     gl_Position = coord;
     Pos = (coord.xy / coord.w + 1) / 2 * u_viewport;
     Time = utime;

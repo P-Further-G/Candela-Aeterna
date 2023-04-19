@@ -27,10 +27,16 @@ class Scene:
 
     def add_object(self,obj,group):
 
-        self.scene_obj[obj['name']] = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3),GL_TRIANGLES, 
+        try:
+            self.scene_obj[obj['name']] = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3),GL_TRIANGLES, 
                                                       obj['indices'],batch=self.batch,group=group, position=('f',(obj['positions'])),
                                                       normal=('f',(obj['normals'])),
                                                       texcoord=('f',(obj['texcoords'])))
+
+        except:
+            self.scene_obj[obj['name']] = self.shaderprogram.vertex_list_indexed(int(len(obj['positions'])/3),GL_TRIANGLES, 
+                                                      obj['indices'],batch=self.batch,group=group, position=('f',(obj['positions'])))
+
     
     def add_beam(self,name,group,xyz):
 

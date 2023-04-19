@@ -1,8 +1,8 @@
 import pyglet
-
 from Moduleq.Scene import Scene
 from Moduleq.Camera import Camera
-from Moduleq.Texture import TextureGroup, TextureGlassGroup, Beam_Group, TextureShadowGroup, ShadowMap
+from Moduleq.Texture import TextureGroup, TextureGlassGroup, Beam_Group, TextureShadowGroup, ShadowGroup
+from Moduleq.FrameBuffer import FrameBuffer
 from Moduleq.Metin import *
 
 etiket1 = pyglet.image.load('resources/Etiket1_Simülasyonlar.png')
@@ -28,14 +28,16 @@ class Level():
     def __init__(self,win):
 
         self.CURRENT_LEVEL = 0
-        self.Camera = Camera('Shaders/VertexShader.shader','Shaders/FragmentShader.shader')
-        self.Lightning = Camera('Shaders/LightVertex.shader','Shaders/LightFragment.shader')
-        self.Shadow = Camera('Shaders/VertexShadow.shader','Shaders/FragmentShadow.shader')
-        #self.shadowmap = Camera('Shaders/shadowmapv.shader','Shaders/shadowmapf.shader')
-        #self.fbo, self.map = ShadowMap(2048,2048)
+        self.Camera = Camera('Shaders/def_vert.shader','Shaders/def_frag.shader')
+        self.Lightning = Camera('Shaders/light_vert.shader','Shaders/light_frag.shader')
+        self.Shadow = Camera('Shaders/shadow_vert.shader','Shaders/shadow_frag.shader')
+        self.FBOshadow = Camera('Shaders/shadowmapv.shader','Shaders/shadowmapf.shader')
+
+        self.FBOshadow.view = pyglet.math.Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -25.0, 1.0])
+        self.fbo = FrameBuffer()
+        self.buffers = pyglet.image.get_buffer_manager()
         self.window = win
         self.time = 0
-
     #=============================================================>
 
     #=>
@@ -48,7 +50,11 @@ class Level():
 
         self.grup1 = TextureGroup(self.menu_texture,self.Camera)
         self.grup2 = TextureGlassGroup(self.cam_texture,self.Camera)
-        self.grup3 = TextureShadowGroup()
+
+        self.grup3 = TextureShadowGroup(self.buffers,win,self.Shadow,self.FBOshadow,self.menu_texture)
+        self.grup4 = ShadowGroup(self.buffers,win,self.FBOshadow,self.Shadow)
+        
+
         self.lightgroup = Beam_Group(self.Lightning,win)
 
 
@@ -74,17 +80,6 @@ class Level():
         self.menu1.add_button("2goesto1",ikmka,0.65,0.65,0.85,0.85,self._openlvl1)
         self.menu1.add_button("2goesto2",kkmka,0.65,0.45,0.85,0.65,self._openlvl2)
         self.menu1.add_button("2goesto3",tvygka,0.65,0.25,0.85,0.45,self._openlvl3)
-
-
-        """self.menu1.add_button("3goesto1",play,0.4,0.5,0.55,0.6,self._openlvl1)
-        self.menu1.add_button("4goesto1",play,0.4,0.65,0.55,0.75,self._openlvl1)
-        self.menu1.add_button("5goesto1",play,0.4,0.8,0.55,0.9,self._openlvl1)
-        self.menu1.add_button("1goesto2",play,0.6,0.2,0.75,0.3,self._openlvl1)
-        self.menu1.add_button("2goesto2",play,0.6,0.35,0.75,0.45,self._openlvl1)
-        self.menu1.add_button("3goesto2",play,0.6,0.5,0.75,0.6,self._openlvl1)
-        self.menu1.add_button("4goesto2",play,0.6,0.65,0.75,0.75,self._openlvl1)
-        self.menu1.add_button("5goesto2",play,0.6,0.8,0.75,0.9,self._openlvl1)"""
-
 
         self.kup1 = Scene(self.Camera)
 
@@ -124,14 +119,15 @@ class Level():
         self.konuanlatımı1.add_button("nexto",play,0.025,0.1,0.1,0.2,self.next_text)
 
         self.Gölge = Scene(self.Shadow)
-        #self.Gölge2 = Scene(self.shadowmap)
-        self.Gölge.add_obj_converted("perde","Models_converted/Perde.txt",None,offset=(0,-4,10))
-        self.Gölge.add_obj_converted("perde","Models_converted/küp.txt",None,offset=(0,0,6))
+        self.Shadowscene = Scene(self.FBOshadow)
 
-        #self.Gölge2.add_obj_converted("perde","Models_converted/Perde.txt",None,offset=(0,-4,10))
-        #self.Gölge2.add_obj_converted("perde","Models_converted/küp.txt",None,offset=(0,0,6))
+        self.Gölge.add_obj_converted("perde","Models_converted/Perde.txt",self.grup3,offset=(0,-4,0))
+        self.Gölge.add_obj_converted("kup","Models_converted/kagitadam.txt",self.grup3,offset=(0,0,5))
 
-        self.Gölge.add_button('huuh',etiket4,0.025,0.775,0.155,0.925,self._returntomenu3)
+        self.Shadowscene.add_obj_converted("perde","Models_converted/Perde.txt",self.grup4,offset=(0,-4,0))
+        self.Shadowscene.add_obj_converted("kup","Models_converted/kagitadam.txt",self.grup4,offset=(0,0,5))
+        self.Shadowscene.visible = True
+
 
     #=============================================================>
 
@@ -214,6 +210,7 @@ class Level():
         self.Shadow.Smooth_Translate(5*dt)
         self.Shadow.Smooth_Rotate(3*dt)
 
+
         if self.kup1.active:
             self.Reflect.rotate_beam("b1",self.kup1.sliders["sürükleme"]["value"] * self.kup1.sliders["sürükleme"]["multiplier"] ,1,'x')
             self.Reflect.rotate_beam("c1",-self.kup1.sliders["sürükleme"]["value"] * self.kup1.sliders["sürükleme"]["multiplier"],1,'x')
@@ -256,18 +253,30 @@ class Level():
 
         if self.CURRENT_LEVEL == 3:
 
-            glViewport(0,0,2048,2048)
-            glBindFrameBuffer(GL_FRAME_BUFFER, self.fbo)
-            glClear(GL_DEPTH_BUFFER_BIT)
-            self.shadowmap.program.use()
-            self.Gölge2.render()
-            glBindFrameBuffer(GL_FRAMEBUFFER, 0)
+            #pyglet.gl.glCullFace(pyglet.gl.GL_FRONT)
 
-            glViewport(0,0,self.window.width,self.window.height)
-            self.Shadow.program.use()
-            glActiveTexture(GL_TEXTURE0 + 1)
-            glBindTexture(GL_TEXTURE_2D, self.map)
+            pyglet.gl.glDisable(pyglet.gl.GL_CULL_FACE)
+
+            pyglet.gl.glViewport(0,0,1024,1024)
+            self.fbo.bind()
+            self.Shadowscene.render()
+            self.fbo.unbind()
+
+            pyglet.gl.glViewport(0,0,self.window.width,self.window.height)
+
+
+            pyglet.gl.glActiveTexture(pyglet.gl.GL_TEXTURE1)
+
+            pyglet.gl.glBindTexture(pyglet.gl.GL_TEXTURE_2D, self.fbo.tex)
+
+            pyglet.gl.glActiveTexture(pyglet.gl.GL_TEXTURE0)
+
+            pyglet.gl.glBindTexture(self.menu_texture.target, self.menu_texture.id)
+
             self.Gölge.render()
+
+            pyglet.gl.glEnable(pyglet.gl.GL_CULL_FACE)
+            pyglet.gl.glCullFace(pyglet.gl.GL_BACK)
 
     def _openlvl1(self):
 
@@ -311,6 +320,7 @@ class Level():
         self.Camera.RTZ()
         self.Lightning.RTZ()
         self.Shadow.RTZ()
+        self.FBOshadow.RTZ()
         self.CURRENT_LEVEL = 3
 
         self.menu.visible = False

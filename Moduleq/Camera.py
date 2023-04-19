@@ -15,9 +15,8 @@ class Camera:
         self.program = ShaderProgram(vert_Shader, frag_Shader)
 
         self.projection= Mat4.perspective_projection(1280/float(620),z_near=0.1, z_far=255,fov=30.0)
-        self.modelview = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -15.0, 1.0])
-        self.program['projection'] = self.projection
-        self.program['modelview'] = self.modelview
+        self.model = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
+        self.view = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -15.0, 1.0])
 
         self.rotx = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
         self.roty = Mat4([ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0])
@@ -68,7 +67,7 @@ class Camera:
 
         self.roty= Mat4([cos(self.angle_y),0,sin(self.angle_y),0,0,1,0,0,-sin(self.angle_y),0,cos(self.angle_y),0,0,0,0,1])
 
-        self.program['modelview'] =  self.modelview @ self.rotx @ self.roty
+        self.program['model'] =  self.model @ self.rotx @ self.roty
 
 
     def Translate(self, tx, ty, tz):
@@ -78,8 +77,17 @@ class Camera:
         self.pos_x += tx
         self.pos_y += ty
 
-        self.modelview = Mat4([ *self.modelview[0:12], self.pos_x, self.pos_y, self.pos_z, 1])
-        self.program['modelview'] = self.roty @ self.rotx @ self.modelview
+        self.view = Mat4([ *self.view[0:12], self.pos_x, self.pos_y, self.pos_z, 1])
+        self.program['view'] = self.view
+
+    def setposition(self, tx, ty, tz):
+
+        self.pos_z = tz
+        self.pos_x = tx
+        self.pos_y = ty
+
+        self.view = Mat4([ *self.view[0:12], self.pos_x, self.pos_y, self.pos_z, 1])
+        self.program['view'] = self.view
 
     def will_move_to(self,dx,dy,dz,limit=True):
 
